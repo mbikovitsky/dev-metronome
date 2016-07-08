@@ -46,6 +46,9 @@ async def beat(args):
                                        args.max),
               flush=True)
 
+        if not args.interval:
+            return
+
         await asyncio.sleep(args.interval)
 
 
@@ -62,20 +65,21 @@ def parse_command_line():
                                                  "standard output.")
     parser.add_argument("--api-key",
                         help="RANDOM.ORG API key, for fetching truly random "
-                             "numbers")
+                             "numbers.")
     parser.add_argument("--min",
                         type=int,
-                        help="Lower boundary (defaults to %(default)s)",
+                        help="Lower boundary (defaults to %(default)s).",
                         default=0)
     parser.add_argument("--max",
                         type=int,
                         help="Upper boundary, inclusive (defaults to "
-                             "%(default)s)",
+                             "%(default)s).",
                         default=int(1e9))
     parser.add_argument("--interval",
                         type=check_negative,
                         help="Heartbeat interval, in seconds (defaults "
-                             "to %(default)s)",
+                             "to %(default)s). Specify 0 to generate only "
+                             "one integer and immediately exit.",
                         default=60*60)
 
     return parser.parse_args()
