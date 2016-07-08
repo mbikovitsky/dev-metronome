@@ -24,20 +24,27 @@ async def get_random_integer_offline(range_min, range_max):
     return random.randint(range_min, range_max)
 
 
+async def get_random_integer(api_key, range_min, range_max):
+    if api_key:
+        try:
+            number = await get_random_integer_online(api_key,
+                                                     range_min,
+                                                     range_max)
+        except:
+            traceback.print_exc()
+            number = await get_random_integer_offline(range_min, range_max)
+    else:
+        number = await get_random_integer_offline(range_min, range_max)
+
+    return number
+
+
 async def beat(args):
     while True:
-        if args.api_key:
-            try:
-                number = await get_random_integer_online(args.api_key,
-                                                         args.min,
-                                                         args.max)
-            except:
-                traceback.print_exc()
-                number = await get_random_integer_offline(args.min, args.max)
-        else:
-            number = await get_random_integer_offline(args.min, args.max)
-
-        print(number, flush=True)
+        print(await get_random_integer(args.api_key,
+                                       args.min,
+                                       args.max),
+              flush=True)
 
         await asyncio.sleep(args.interval)
 
