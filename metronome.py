@@ -49,7 +49,14 @@ async def beat(args):
         await asyncio.sleep(args.interval)
 
 
-def main():
+def parse_command_line():
+    def check_negative(argument):
+        value = int(argument)
+        if value < 0:
+            raise argparse.ArgumentTypeError("'%s' is not a positive integer"
+                                             % (argument,))
+        return value
+
     parser = argparse.ArgumentParser(description="Generates a steady stream "
                                                  "of random integers to the "
                                                  "standard output.")
@@ -66,11 +73,16 @@ def main():
                              "%(default)s)",
                         default=int(1e9))
     parser.add_argument("--interval",
-                        type=int,
+                        type=check_negative,
                         help="Heartbeat interval, in seconds (defaults "
                              "to %(default)s)",
                         default=60*60)
-    args = parser.parse_args()
+
+    return parser.parse_args()
+
+
+def main():
+    args = parse_command_line()
 
     with closing(asyncio.get_event_loop()) as loop:
         loop.run_until_complete(beat(args))
