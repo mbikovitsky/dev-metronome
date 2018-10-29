@@ -1,23 +1,35 @@
 #!/usr/bin/env python3
 
 
+import argparse
 import asyncio
 import random
-import argparse
 import traceback
 from contextlib import closing
-from pulsar.apps import rpc
+
+import requests
 
 
 async def get_random_integer_online(api_key, range_min, range_max):
-    proxy = rpc.JsonProxy("https://api.random.org/json-rpc/1/invoke",
-                          data={"apiKey": api_key})
+    url = "https://api.random.org/json-rpc/1/invoke"
 
-    response = await proxy.generateIntegers(n=1,
-                                            min=range_min,
-                                            max=range_max)
+    headers = {"Content-Type": "application/json-rpc"}
 
-    return response["random"]["data"][0]
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "generateIntegers",
+        "params": {
+            "apiKey": api_key,
+            "n": 1,
+            "min": range_min,
+            "max": range_max
+        },
+        "id": 0
+    }
+
+    response = requests.post(url, json=payload, headers=headers).json()
+
+    return response["result"]["random"]["data"][0]
 
 
 async def get_random_integer_offline(range_min, range_max):
