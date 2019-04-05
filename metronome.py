@@ -11,9 +11,9 @@ import requests
 
 
 async def get_random_integer_online(api_key, range_min, range_max):
-    url = "https://api.random.org/json-rpc/1/invoke"
+    url = "https://api.random.org/json-rpc/2/invoke"
 
-    headers = {"Content-Type": "application/json-rpc"}
+    headers = {"Content-Type": "application/json"}
 
     payload = {
         "jsonrpc": "2.0",
